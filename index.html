@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://theonekit.github.io/index.js"></script>
+    <div id="mount-point"></div>
+    <script type="text/babel">
+
+        const {
+            Fragment,
+        } = React;
+
+        const {
+            AppBar,
+            Toolbar,
+            Typography,
+            Avatar,
+            Container,
+            IconButton,
+            TextField
+        } = material.core;
+
+        const {
+            Send
+        } = material.icons; // fontSize="small"
+
+        class Control extends React.Component {
+
+            static defaultProps = {
+                onSend: (msg) => console.log({msg}),
+            }
+
+            state = {
+                value: ''
+            }
+            
+            constructor(props) {
+                super(props)
+            }
+
+            changeHandler = (e) => {
+                const value = e.target.value;
+                const newState = {
+                    value
+                }
+                this.setState(newState);
+            }
+
+            clickHandler = () => {
+                this.props.onSend(this.state.value)
+            }
+
+            render = () => (
+                <Fragment>
+                    <div style={{height: '60px'}}></div>
+                    <div style={{position: 'fixed', bottom: '0px', left: '0px', right: '0px', padding: '5px', height: '50px'}}>
+                        <TextField onChange={this.changeHandler} style={{width: 'calc(100% - 48px)'}}/>
+                        <IconButton onClick={this.clickHandler}>
+                            <Send/>
+                        </IconButton>
+                    </div>  
+                </Fragment>
+            );
+
+        }
+
+        const Message = ({
+            message,
+            isReverse,
+            src
+        }) => (
+            <div style={{width: '100%', display: 'flex', flexDirection: isReverse ? 'row-reverse' : 'row'}}>
+                <div style={{display: 'flex', flexDirection: isReverse ? 'row' : 'row-reverse'}}>
+                    <div style={{padding: '6px', margin: '2px', borderRadius: '5px', color: isReverse ? '#000' : '#fff', background: isReverse ? '#fff' : '#3f51b5'}}>
+                        {message}
+                    </div>
+                    <Avatar style={{height: '16px', width: '16px'}} src={src}/>
+                </div>
+            </div>
+        )
+
+        class View extends React.Component {
+
+            state = {
+                items: []                
+            }
+
+            constructor(props) {
+                super(props)
+            }
+
+            componentDidMount = () => {
+                const newState = {
+                    items: [
+                        {
+                            id: 1,
+                            isReverse: true,
+                            src: '1.jpg',
+                            message: 'Кукуку'
+                        },
+                        {
+                            id: 2,
+                            isReverse: false,
+                            src: '2.jpg',
+                            message: 'Кря'
+                        },
+                        {
+                            id: 3,
+                            isReverse: true,
+                            src: '3.jpg',
+                            message: 'Ok'
+                        }
+                    ]
+                }
+                this.setState(newState); // Object.assign(state, newState)
+            }
+
+            changeHandler = (text) => {
+                alert(text)
+            }
+
+            render = () => (
+                <Container>
+                    {
+                        this.state.items.map(({id, src, isReverse, message}) => (
+                            <Message isReverse={isReverse} src={src} 
+                                key={id} message={message} />
+                        ))
+                    }
+                    <Control onSend={this.changeHandler}/>
+                </Container>
+            ) 
+
+        }
+
+        const App = () => (
+            <Fragment>
+                <AppBar>
+                    <Toolbar>
+                        <Typography variant="h6">
+                            Amazing-Chat
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <div style={{paddingTop: '60px'}}></div>
+                <View/>
+            </Fragment>
+        );
+
+        ReactDOM.render(<App/>, document.getElementById('mount-point'));
+    
+    </script>
+</body>
